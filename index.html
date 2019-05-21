@@ -5,8 +5,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <title>Générateur de signature AdA Risques</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
         <link href="style.css" rel="stylesheet">
-        <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10"></script>
+        <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.min.js" integrity="sha256-chlNFSVx3TdcQ2Xlw7SvnbLAavAQLO0Y/LBiWX04viY=" crossorigin="anonymous"></script>
         <script src="signature.js"></script>
     </head>
     <body>
@@ -58,34 +60,43 @@
                         </div>
                     </div>
                     <div class="col-sm-8 offset-sm-4">
+                        <label for="inputEmailPerso" class="sr-only">Email perso</label>
+                        <input type="email" id="inputEmailPerso" v-model="emailPerso" class="form-control" placeholder="email@perso.com">
+                    </div>
+                    <div class="col-sm-8 offset-sm-4">
                         <label for="inputTelephone" class="sr-only">Téléphone</label>
                         <input type="phone" id="inputTelephone" v-model="telephone" class="form-control" placeholder="+33 6 12 34 56 78">
                     </div>
                 </div>
 
-                <button class="btn btn-lg btn-primary btn-block mt-3" v-on:click="copy">Copier la signature</button>
+                <div class="d-flex">
+                    <button class="btn btn-lg btn-primary flex-grow-1 mr-3" v-on:click="save"><i class="fas fa-paste"></i> Copier la signature</button>
+                    <button class="btn btn-lg btn-secondary" v-on:click="save" title="Copier le code HTML"><i class="fas fa-code"></i></button>
+                </div>
             </form>
             <div id="signature" class="col-xl-7">
-                <pre id="content">
-&lt;div style="font-family:monospace;color:#000080"&gt;
-    &lt;p style="font-style:italic;font-weight:bold;color:#99cc00"&gt;
-        **** Pour mettre à jour ta cotisation :
-        &lt;a href="https://ada-risques.fr/article3"&gt;https://ada-risques.fr/article3&lt;/a&gt;&lt;br/&gt;
-        **** Pour te connecter à ton compte :
-        &lt;a href="https://enet.ada-risques.fr/"&gt;https://enet.ada-risques.fr/&lt;/a&gt;
-    &lt;/p&gt;
-    &lt;p&gt;&lt;b&gt;{{nom}}&lt;/b&gt; (Promo {{annee}} {{filiere}})&lt;/p&gt;
-    &lt;p style="font-style:italic"&gt;
-        &lt;b&gt;{{fonction}} de l'Association des alumni en maîtrise des risques&lt;/b&gt;&lt;br/&gt;
-        &lt;b&gt;(ex-&lt;i&gt;Association des anciens de l'ENSI de Bourges&lt;/i&gt;)&lt;/b&gt;&lt;br/&gt;
-        88, boulevard Lahitolle &ndash; 18020 Bourges Cedex&lt;br/&gt;<span v-if="telephone">
-        &lt;b&gt;Tél.&lt;/b&gt;&nbsp;: {{telephone}}&lt;br/&gt;</span>
-        &lt;b&gt;Mél.&lt;/b&gt;&nbsp;:
-            &lt;a href="mailto:{{email}}@ada-risques.fr"&gt;{{email}}@ada-risques.fr&lt;/a&gt;&lt;br/&gt;
-        &lt;b&gt;Web&lt;/b&gt;&nbsp;:
-            &lt;a href="https://ada-risques.fr"&gt;https://ada-risques.fr&lt;/a&gt;
-    &lt;/p&gt;
-&lt;/div&gt;</pre>
+                <div id="content">
+                    <div style="font-family:monospace;color:#000080">
+                        <p style="font-style:italic;font-weight:bold;color:#99cc00">
+                            **** Pour mettre à jour ta cotisation :
+                            <a href="https://ada-risques.fr/article3">https://ada-risques.fr/article3</a><br/>
+                            **** Pour te connecter à ton compte :
+                            <a href="https://enet.ada-risques.fr/">https://enet.ada-risques.fr/</a>
+                        </p>
+                        <p><b>{{nom}}</b> (Promo {{annee}} {{filiere}})</p>
+                        <p style="font-style:italic">
+                            <b>{{fonction}} de l'Association des alumni en maîtrise des risques</b><br/>
+                            <b>(ex-<i>Association des anciens de l'ENSI de Bourges</i>)</b><br/>
+                            88, boulevard Lahitolle &ndash; 18020 Bourges Cedex<br/>
+                            <span v-if="telephone"><b>Tél.</b>&nbsp;: {{telephone}}<br/></span>
+                            <b>Mél.</b>&nbsp;:
+                                <a v-bind:href="'mailto:' + email + '@ada-risques.fr'">{{email}}@ada-risques.fr</a>
+                                <span v-if="emailPerso"> &ndash; <a v-bind:href="'mailto:' + emailPerso">{{emailPerso}}</a></span><br/>
+                            <b>Web</b>&nbsp;:
+                                <a href="https://ada-risques.fr">https://ada-risques.fr</a>
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     </body>
