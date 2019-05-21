@@ -54,7 +54,7 @@ window.addEventListener('load', function() {
     new ClipboardJS('.btn-secondary', {
         text: function(trigger) {
             return document.querySelector("#content").innerHTML
-                .replace(/\n */g, "")
+                .replace(/\n +/g, " ")
                 .replace(/(<br>) */g, "$1\n")
                 .replace(/(<\/p>) */g, "$1\n")
                 .replace(/(<\/a>)(<\/p>) */g, "$1\n$2")
