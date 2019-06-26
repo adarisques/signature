@@ -9,7 +9,7 @@ pages:
     
     artifacts:
         paths:
-        - publi
+        - public
     
     only:
     - master
