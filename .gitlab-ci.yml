@@ -3,11 +3,13 @@ image: alpine:latest
 pages:
     stage: deploy
     script:
-    - echo 'Deploying static files...'
-
+    - mkdir .public
+    - cp -r * .public
+    - mv .public public
+    
     artifacts:
         paths:
-        - .
+        - publi
     
     only:
     - master
