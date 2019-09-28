@@ -1,101 +1,110 @@
 <!DOCTYPE html>
-<html>
+<html class="h-100">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <title>Générateur de signature AdA Risques</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
-        <link href="style.css" rel="stylesheet">
         <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.min.js" integrity="sha256-chlNFSVx3TdcQ2Xlw7SvnbLAavAQLO0Y/LBiWX04viY=" crossorigin="anonymous"></script>
         <script src="signature.js"></script>
+        <style>
+            .form-signature .form-control { height: auto; padding: 10px; }
+            #content { border-radius: 1em; border: 1px solid chocolate; background-color: beige; }
+        </style>
     </head>
-    <body>
-        <div id="container" class="row align-items-center">
-            <form class="form-signature" class="col-xl-5">
-                <div class="text-center mb-5">
-                    <img class="mb-4" src="https://ada-risques.fr/images/headerNew.png" alt="">
-                    <h1 class="h3 font-weight-normal">Générateur de signature</h1>
+    <body class="h-100 bg-light d-flex flex-column">
+        <nav class="navbar navbar-dark bg-dark">
+            <a class="navbar-brand" href="#">
+                <img height="36" class="bg-white d-inline-block align-top rounded p-1" src="https://ada-risques.fr/images/headerNew.png" alt="">
+                Générateur de signature
+            </a>
+        </nav>
+        <div class="container flex-grow-1 d-flex align-items-center" id="container">
+            <div class="row">
+                <div class="col-lg-6 mb-3">
+                    <form class="form-signature px-xl-3">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Tu es :</label>
+                            <div class="col-sm-8">
+                                <label for="inputNom" class="sr-only">Prénom Nom</label>
+                                <input type="text" id="inputNom" v-model="nom" class="form-control" placeholder="Prénom Nom" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">de la promotion :</label>
+                            <div class="col-sm-8">
+                                <label for="inputAnnee" class="sr-only">Année et filière</label>
+                                <div class="input-group">
+                                    <select id="inputAnnee" v-model="annee" class="form-control" placeholder="Année" required>
+                                        <option v-for="an in annees" v-bind:value="an">{{an}}</option>
+                                    </select>
+                                    <select d="inputFiliere" v-model="filiere" class="form-control" required>
+                                        <option>MRI</option>
+                                        <option>STI</option>
+                                        <option>ERE</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Ta fonction :</label>
+                            <div class="col-sm-8">
+                                <label for="inputFonction" class="sr-only">Fonction</label>
+                                <input type="text" id="inputFonction" v-model="fonction" class="form-control" placeholder="Président..." required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Pour te contacter :</label>
+                            <div class="col-sm-8">
+                                <label for="inputEmail" class="sr-only">Email AdA</label>
+                                <div class="input-group">
+                                    <input type="text" id="inputEmail" v-model="email" class="form-control" placeholder="president" required>
+                                    <div class="input-group-append"><span class="input-group-text">@ada-risques.fr</span></div>
+                                </div>
+                            </div>
+                            <div class="col-sm-8 offset-sm-4">
+                                <label for="inputEmailPerso" class="sr-only">Email perso</label>
+                                <input type="email" id="inputEmailPerso" v-model="emailPerso" class="form-control" placeholder="email@perso.com">
+                            </div>
+                            <div class="col-sm-8 offset-sm-4">
+                                <label for="inputTelephone" class="sr-only">Téléphone</label>
+                                <input type="phone" id="inputTelephone" v-model="telephone" class="form-control" placeholder="+33 6 12 34 56 78">
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <button class="btn btn-lg btn-primary flex-grow-1 mr-3" v-on:click="save"><i class="fas fa-paste"></i> Copier la signature</button>
+                            <button class="btn btn-lg btn-secondary" v-on:click="save" title="Copier le code HTML"><i class="fas fa-code"></i></button>
+                        </div>
+                    </form>
                 </div>
-                <div class="form-group row">
-                    <label class="col-sm-4 col-form-label">Tu es :</label>
-                    <div class="col-sm-8">
-                        <label for="inputNom" class="sr-only">Prénom Nom</label>
-                        <input type="text" id="inputNom" v-model="nom" class="form-control" placeholder="Prénom Nom" required>
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label class="col-sm-4 col-form-label">de la promotion :</label>
-                    <div class="col-sm-8">
-                        <label for="inputAnnee" class="sr-only">Année et filière</label>
-                        <div class="input-group">
-                            <select id="inputAnnee" v-model="annee" class="form-control" placeholder="Année" required>
-                                <option v-for="an in annees" v-bind:value="an">{{an}}</option>
-                            </select>
-                            <select d="inputFiliere" v-model="filiere" class="form-control" required>
-                                <option>MRI</option>
-                                <option>STI</option>
-                                <option>ERE</option>
-                            </select>
+                <div id="signature" class="col-lg mb-3">
+                    <div id="content" class="p-3">
+                        <div style="font-family:monospace;color:#000080">
+                            <p style="font-style:italic;font-weight:bold;color:#99cc00">
+                                **** Pour mettre à jour ta cotisation :
+                                <a href="https://ada-risques.fr/article3">https://ada-risques.fr/article3</a><br/>
+                                **** Pour te connecter à ton compte :
+                                <a href="https://enet.ada-risques.fr/">https://enet.ada-risques.fr/</a>
+                            </p>
+                            <p><b>{{nom}}</b> (Promo {{annee}} {{filiere}})</p>
+                            <p style="font-style:italic">
+                                <b>{{fonction}} de l'AdA Risques : Association des alumni MRI, STI, ERE et Hubert Curien</b><br/>
+                                <b>(ex-<i>AdA ENSI de Bourges</i>)</b><br/>
+                                88, boulevard Lahitolle &ndash; 18020 Bourges Cedex<br/>
+                                <span v-if="telephone"><b>Tél.</b>&nbsp;: {{telephone}}<br/></span>
+                                <b>Mél.</b>&nbsp;:
+                                    <a v-bind:href="'mailto:' + email + '@ada-risques.fr'">{{email}}@ada-risques.fr</a>
+                                    <span v-if="emailPerso"> &ndash; <a v-bind:href="'mailto:' + emailPerso">{{emailPerso}}</a></span><br/>
+                                <b>Web</b>&nbsp;:
+                                    <a href="https://ada-risques.fr">https://ada-risques.fr</a>
+                            </p>
                         </div>
                     </div>
                 </div>
-
-                <div class="form-group row">
-                    <label class="col-sm-4 col-form-label">Ta fonction :</label>
-                    <div class="col-sm-8">
-                        <label for="inputFonction" class="sr-only">Fonction</label>
-                        <input type="text" id="inputFonction" v-model="fonction" class="form-control" placeholder="Président..." required>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-sm-4 col-form-label">Pour te contacter :</label>
-                    <div class="col-sm-8">
-                        <label for="inputEmail" class="sr-only">Email AdA</label>
-                        <div class="input-group">
-                            <input type="text" id="inputEmail" v-model="email" class="form-control" placeholder="president" required>
-                            <div class="input-group-append"><span class="input-group-text">@ada-risques.fr</span></div>
-                        </div>
-                    </div>
-                    <div class="col-sm-8 offset-sm-4">
-                        <label for="inputEmailPerso" class="sr-only">Email perso</label>
-                        <input type="email" id="inputEmailPerso" v-model="emailPerso" class="form-control" placeholder="email@perso.com">
-                    </div>
-                    <div class="col-sm-8 offset-sm-4">
-                        <label for="inputTelephone" class="sr-only">Téléphone</label>
-                        <input type="phone" id="inputTelephone" v-model="telephone" class="form-control" placeholder="+33 6 12 34 56 78">
-                    </div>
-                </div>
-
-                <div class="d-flex">
-                    <button class="btn btn-lg btn-primary flex-grow-1 mr-3" v-on:click="save"><i class="fas fa-paste"></i> Copier la signature</button>
-                    <button class="btn btn-lg btn-secondary" v-on:click="save" title="Copier le code HTML"><i class="fas fa-code"></i></button>
-                </div>
-            </form>
-            <div id="signature" class="col-xl-7">
-                <div id="content">
-                    <div style="font-family:monospace;color:#000080">
-                        <p style="font-style:italic;font-weight:bold;color:#99cc00">
-                            **** Pour mettre à jour ta cotisation :
-                            <a href="https://ada-risques.fr/article3">https://ada-risques.fr/article3</a><br/>
-                            **** Pour te connecter à ton compte :
-                            <a href="https://enet.ada-risques.fr/">https://enet.ada-risques.fr/</a>
-                        </p>
-                        <p><b>{{nom}}</b> (Promo {{annee}} {{filiere}})</p>
-                        <p style="font-style:italic">
-                            <b>{{fonction}} de l'AdA Risques : Association des alumni MRI, STI, ERE et Hubert Curien</b><br/>
-                            <b>(ex-<i>AdA ENSI de Bourges</i>)</b><br/>
-                            88, boulevard Lahitolle &ndash; 18020 Bourges Cedex<br/>
-                            <span v-if="telephone"><b>Tél.</b>&nbsp;: {{telephone}}<br/></span>
-                            <b>Mél.</b>&nbsp;:
-                                <a v-bind:href="'mailto:' + email + '@ada-risques.fr'">{{email}}@ada-risques.fr</a>
-                                <span v-if="emailPerso"> &ndash; <a v-bind:href="'mailto:' + emailPerso">{{emailPerso}}</a></span><br/>
-                            <b>Web</b>&nbsp;:
-                                <a href="https://ada-risques.fr">https://ada-risques.fr</a>
-                        </p>
-                    </div>
+                <div class="fixed-bottom text-center h4 p-3">
+                    <span class="badge badge-pill badge-dark font-weight-normal invisible px-3 py-2" id="notification">Notification</span>
                 </div>
             </div>
         </div>

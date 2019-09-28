@@ -1,10 +1,18 @@
-console.log("Hello " + (new Date()).toISOString());
-
-var annees = [];
-for (let i = 2000; i <= (new Date()).getFullYear() + 3; i++) {
-    annees.push(i);
+var annees = function(start) {
+    let liste = [];
+    for (let i = start; i <= (new Date()).getFullYear() + 3; i++) {
+        liste.push(i);
+    }
+    Object.freeze(liste);
+    return liste;
 }
-Object.freeze(annees);
+
+var toast = function (target, text) {
+    let el = document.querySelector(target);
+    el.innerText = text;
+    el.classList.remove('invisible');
+    setTimeout(() => { el.classList.add('invisible'); }, 3000);
+}
 
 window.addEventListener('load', function() {
     new Vue({
@@ -18,7 +26,7 @@ window.addEventListener('load', function() {
             email: '',
             emailPerso: '',
             telephone: '',
-            annees: annees
+            annees: annees(2000)
         },
         mounted() {
             if (localStorage.getItem('adaSignature')) {
@@ -35,11 +43,8 @@ window.addEventListener('load', function() {
         methods: {
             save: function(event) {
                 event.preventDefault();
-
                 var data = Object.assign({}, this.$data);
                 delete data.annees;
-                console.log(data);
-
                 const parsed = JSON.stringify(data);
                 localStorage.setItem('adaSignature', parsed);
             }
@@ -48,11 +53,13 @@ window.addEventListener('load', function() {
 
     new ClipboardJS('.btn-primary', {
         target: function(trigger) {
+            toast("#notification", "Signature hypertexte copiée");
             return document.querySelector("#content");
         }
     });
     new ClipboardJS('.btn-secondary', {
         text: function(trigger) {
+            toast("#notification", "Code source de la signature copié");
             return document.querySelector("#content").innerHTML
                 .replace(/\n +/g, " ")
                 .replace(/(<br>) */g, "$1\n")
