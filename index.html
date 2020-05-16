@@ -12,6 +12,10 @@
         <style>
             .form-signature .form-control { height: auto; padding: 10px; }
             #content { border-radius: 1em; border: 1px solid chocolate; background-color: beige; }
+            .input-group-vertical > .input-group-vertical-item:not(:first-child) .input-group-text,
+            .input-group-vertical > .input-group-vertical-item:not(:first-child) .form-control { border-top-left-radius: 0; border-top-right-radius: 0; border-top: 0; }
+            .input-group-vertical > .input-group-vertical-item:not(:last-child) .input-group-text,
+            .input-group-vertical > .input-group-vertical-item:not(:last-child) .form-control { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
         </style>
     </head>
     <body class="h-100 bg-light d-flex flex-column">
@@ -24,7 +28,7 @@
         <div class="container flex-grow-1 d-flex align-items-center" id="container">
             <div class="row">
                 <div class="col-lg mb-3">
-                    <form class="form-signature px-xl-3">
+                    <form class="form-signature pr-xl-3">
                         <div class="form-group row">
                             <label class="col-sm-4 col-form-label">Tu es :</label>
                             <div class="col-sm-8">
@@ -35,17 +39,8 @@
                         <div class="form-group row">
                             <label class="col-sm-4 col-form-label">de la promotion :</label>
                             <div class="col-sm-8">
-                                <label for="inputAnnee" class="sr-only">Année et filière</label>
-                                <div class="input-group">
-                                    <select id="inputAnnee" v-model="annee" class="form-control" placeholder="Année" required>
-                                        <option v-for="an in annees" v-bind:value="an">{{an}}</option>
-                                    </select>
-                                    <select d="inputFiliere" v-model="filiere" class="form-control" required>
-                                        <option>MRI</option>
-                                        <option>STI</option>
-                                        <option>ERE</option>
-                                    </select>
-                                </div>
+                                <label for="inputPromotion" class="sr-only">Promotion</label>
+                                <promotion-input v-model="promotion"></promotion-input>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -57,20 +52,40 @@
                         </div>
                         <div class="form-group row">
                             <label class="col-sm-4 col-form-label">Pour te contacter :</label>
-                            <div class="col-sm-8">
-                                <label for="inputEmail" class="sr-only">Email AdA</label>
-                                <div class="input-group">
-                                    <input type="text" id="inputEmail" v-model="email" class="form-control" placeholder="president" required>
-                                    <div class="input-group-append"><span class="input-group-text">@ada-risques.fr</span></div>
+                            <div class="col-sm-8 input-group-vertical">
+                                <div class="input-group-vertical-item">
+                                    <label for="inputEmail" class="sr-only">Email AdA</label>
+                                    <div class="input-group">
+                                        <input type="text" id="inputEmail" v-model="email" class="form-control" placeholder="president" required>
+                                        <div class="input-group-append"><span class="input-group-text">@ada-risques.fr</span></div>
+                                    </div>
+                                </div>
+                                <div class="input-group-vertical-item">
+                                    <label for="inputEmailPerso" class="sr-only">Email perso</label>
+                                    <input type="email" id="inputEmailPerso" v-model="emailPerso" class="form-control" placeholder="email@perso.com">
+                                </div>
+                                <div class="input-group-vertical-item">
+                                    <label for="inputTelephone" class="sr-only">Téléphone</label>
+                                    <input type="phone" id="inputTelephone" v-model="telephone" class="form-control" placeholder="+33 6 12 34 56 78">
                                 </div>
                             </div>
-                            <div class="col-sm-8 offset-sm-4">
-                                <label for="inputEmailPerso" class="sr-only">Email perso</label>
-                                <input type="email" id="inputEmailPerso" v-model="emailPerso" class="form-control" placeholder="email@perso.com">
-                            </div>
-                            <div class="col-sm-8 offset-sm-4">
-                                <label for="inputTelephone" class="sr-only">Téléphone</label>
-                                <input type="phone" id="inputTelephone" v-model="telephone" class="form-control" placeholder="+33 6 12 34 56 78">
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Opt-out mailing :</label>
+                            <div class="col-sm-8">
+                                <label for="inputListe" class="sr-only">Fonction</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text">
+                                            <input type="checkbox" id="inputWithListe" v-model="avecListe">
+                                        </div>
+                                    </div>
+                                    <select class="form-control custom-select" v-model="liste">
+                                        <option>alumni</option>
+                                        <option>adherents</option>
+                                    </select>
+                                    <div class="input-group-append"><span class="input-group-text">@ada-risques.fr</span></div>
+                                </div>
                             </div>
                         </div>
                         <div class="d-flex">
@@ -86,10 +101,9 @@
                                 **** Pour mettre à jour ta cotisation :
                                 <a href="https://ada-risques.fr/article3">https://ada-risques.fr/article3</a><br/>
                                 **** Pour te connecter à ton compte :
-                                <a href="https://enet.ada-risques.fr/">https://enet.ada-risques.fr/</a><br/>
-                                **** Pour te désinscrire de la liste : <a href="mailto:alumni-unsubscribe@ada-risques.fr">alumni-unsubscribe@ada-risques.fr</a>
+                                <a href="https://enet.ada-risques.fr/">https://enet.ada-risques.fr/</a>
                             </p>
-                            <p><b>{{nom}}</b> (Promo {{annee}} {{filiere}})</p>
+                            <p><b>{{nom}}</b> (Promo {{promotion.year}} {{promotion.major}})</p>
                             <p style="font-style:italic">
                                 <b>{{fonction}} de l'AdA Risques : Association des alumni MRI, STI, ERE et Hubert Curien</b><br/>
                                 <b>(ex-<i>AdA ENSI de Bourges</i>)</b><br/>
@@ -100,6 +114,10 @@
                                     <span v-if="emailPerso"> &ndash; <a v-bind:href="'mailto:' + emailPerso">{{emailPerso}}</a></span><br/>
                                 <b>Web</b>&nbsp;:
                                     <a href="https://ada-risques.fr">https://ada-risques.fr</a>
+                            </p>
+                            <p style="font-size:80%" v-if="avecListe">
+                                Si tu ne souhaites plus être inclu aux mailings de l'AdA Risques, envoi un message à
+                                <a href="mailto:alumni-unsubscribe@ada-risques.fr">{{liste}}-unsubscribe@ada-risques.fr</a>
                             </p>
                         </div>
                     </div>

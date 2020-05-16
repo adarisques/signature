@@ -1,11 +1,29 @@
-var annees = function(start) {
-    let liste = [];
-    for (let i = start; i <= (new Date()).getFullYear() + 3; i++) {
-        liste.push(i);
-    }
-    Object.freeze(liste);
-    return liste;
-}
+Vue.component('PromotionInput', {
+    data: function() {
+        return {
+            years: Array.from((function*(start, stop) {
+              for (var i = start; i < stop; i++) yield i;
+            })(2000, (new Date()).getFullYear() + 3)),
+            majors: ['MRI', 'STI', 'ERE']
+        }
+    },
+    props: {
+        value: {
+            type: Object,
+            required: true,
+        }
+    },
+    template: `
+        <div class="input-group">
+            <select class="form-control custom-select" v-model="value.year">
+                <option v-for="year in years" v-bind:value="year">{{year}}</option>
+            </select>
+            <select class="form-control custom-select" v-model="value.major">
+                <option v-for="major in majors" v-bind:value="major">{{major}}</option>
+            </select>
+        </div>
+    `
+})
 
 var toast = function (target, text) {
     let el = document.querySelector(target);
@@ -20,13 +38,13 @@ window.addEventListener('load', function() {
         data: {
             prenom: '',
             nom: '',
-            annee: '2000',
-            filiere: 'MRI',
+            promotion: { year: 2010, major: 'MRI' },
             fonction: '',
             email: '',
             emailPerso: '',
             telephone: '',
-            annees: annees(2000)
+            liste: 'alumni',
+            avecListe: true,
         },
         mounted() {
             if (localStorage.getItem('adaSignature')) {
@@ -44,7 +62,6 @@ window.addEventListener('load', function() {
             save: function(event) {
                 event.preventDefault();
                 var data = Object.assign({}, this.$data);
-                delete data.annees;
                 const parsed = JSON.stringify(data);
                 localStorage.setItem('adaSignature', parsed);
             }
